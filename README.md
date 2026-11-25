@@ -31,23 +31,51 @@ releases/
 
 `zzzz-openbis-api` was previously resolved from the QBiC Nexus instance at
 `qbic-repo.qbic.uni-tuebingen.de`. That host is not reachable from GitHub Actions egress,
-which broke every CI build. Because the artifact's POM declares no parent, no dependencies
-and no plugins, mirroring it is two files and two checksums — no dependency graph to
-reproduce. Hosting it here removes the only external dependency the QBiC Java reactor had
-on that Nexus.
+which broke every CI build. The artifact's POM declares no parent, no dependencies and no
+plugins, so as a *Maven coordinate* it needs no dependency graph — mirroring it is two files
+and two checksums. Hosting it here removes the only external dependency the QBiC Java reactor
+had on that Nexus.
 
 The `zzzz-` prefix is deliberate upstream: openBIS uses `zzzz*` artifactIds so its own
 modules sort last in a reactor build. It is not a placeholder or a typo.
 
 ## Licensing
 
-openBIS is licensed under the **Apache License 2.0**, which permits redistribution of the
-unmodified binary. The jar and POM here are byte-identical to the ones published by the
-openBIS project; their SHA-1 values are recorded above so any copy can be checked against
-the original.
+openBIS is **Apache 2.0**, per the vendor's own statement: *"openBIS is an open-source
+software distributed under the Apache Licence 2.0"* —
+<https://openbis.ch/index.php/downloads/>. That permits redistribution.
 
-No license files are added or removed. See the upstream project for the authoritative
-licence text: <https://openbis.ch/>
+**What the jar actually contains matters here.** The POM is empty, but the jar is a *shaded
+uber-jar*: openBIS API classes plus 13 bundled libraries, each carrying its own
+`META-INF/LICENSE` and POM inside the archive.
+
+- It is **not** the unmodified openBIS binary, and the POM is **not** byte-identical to an
+  upstream one. It is a QBiC repackaging published under a `life.qbic` coordinate.
+- The SHA-1 values above are recorded so a *transfer* can be verified against what was
+  mirrored. They are not a claim of upstream provenance.
+
+The 13 bundled libraries, all Apache 2.0 — inventory taken from the `pom.properties`
+entries inside the jar:
+
+```
+com.fasterxml.jackson.core:jackson-annotations:2.9.7
+com.fasterxml.jackson.core:jackson-core:2.9.7
+com.fasterxml.jackson.core:jackson-databind:2.9.7
+commons-io:commons-io:2.6
+commons-logging:commons-logging:1.1.1
+org.apache.commons:commons-lang3:3.11
+org.apache.httpcomponents:httpclient:4.3.6
+org.apache.httpcomponents:httpcore:4.3.3
+org.eclipse.jetty:jetty-client:9.4.44.v20210927
+org.eclipse.jetty:jetty-http:9.4.44.v20210927
+org.eclipse.jetty:jetty-io:9.4.44.v20210927
+org.eclipse.jetty:jetty-util:9.4.44.v20210927
+org.slf4j:slf4j-api:1.7.7
+```
+
+No license or notice files are added or removed — the full texts travel inside the archive
+under `META-INF/`. See `THIRD-PARTY.md` for the per-library detail and the method used to
+derive it.
 
 ## Consuming it
 
