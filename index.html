@@ -24,38 +24,53 @@
      pre-wrap on the <pre> makes the source indentation inside it collapse into blank lines. */
   pre { background: #fff; border: 1px solid var(--line); border-radius: 6px;
         padding: 1rem 1.1rem; font-size: .82rem; line-height: 1.55; }
-  pre code { display: block; white-space: pre-wrap; overflow-wrap: anywhere; }
-  table code { overflow-wrap: anywhere; }
-  pre code { background: none; padding: 0; font-size: inherit; }
-  table { width: 100%; border-collapse: collapse; font-size: .88rem; background: #fff;
-          border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
-  th, td { text-align: left; padding: .62rem .85rem; border-bottom: 1px solid var(--line); }
-  th { font-weight: 600; font-size: .74rem; text-transform: uppercase; letter-spacing: .06em;
-       color: var(--muted); background: #f7f8fa; }
-  tr:last-child td { border-bottom: 0; }
-  td:first-child { white-space: nowrap; }
+  pre code { display: block; white-space: pre-wrap; overflow-wrap: anywhere;
+             background: none; padding: 0; font-size: inherit; }
   a { color: var(--accent); }
   .note { border-left: 3px solid #d9a336; background: #fffaf0; padding: .8rem 1rem;
           font-size: .9rem; border-radius: 0 4px 4px 0; }
   footer { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--line);
            color: var(--muted); font-size: .82rem; }
-  /* Narrow screens: a two-column hash table squeezes the SHA-1 to one character per line.
-     Stack it into per-artifact blocks instead. */
+
+  /* Coordinates: one card per artifact rather than a table. A two-column table left no room
+     for a copy control without squeezing the 40-char SHA-1 into a narrow ribbon. */
+  .coords { list-style: none; margin: 0; padding: 0; display: grid; gap: .7rem; }
+  .coords > li { background: #fff; border: 1px solid var(--line); border-radius: 6px;
+                 padding: .8rem .95rem; }
+  .coord-line { display: flex; align-items: baseline; gap: .55rem; flex-wrap: wrap; }
+  .coord-line code { overflow-wrap: anywhere; }
+  .coord-line + .coord-line { margin-top: .5rem; }
+  .meta { margin: .15rem 0 0; font-size: .8rem; color: var(--muted); }
+  .label { font-size: .68rem; text-transform: uppercase; letter-spacing: .07em;
+           color: var(--muted); min-width: 2.9rem; }
+  .sha { font-size: .79rem; }
+
+  [hidden] { display: none !important; }
+  /* Copy buttons are hidden in markup and revealed by script, so a browser without JS shows
+     the page unchanged instead of dead controls. */
+  .copy {
+    font: inherit; font-size: .72rem; line-height: 1;
+    color: var(--muted); background: #fff; border: 1px solid var(--line);
+    border-radius: 4px; padding: .32rem .5rem; cursor: pointer;
+    min-width: 3.9rem; text-align: center;
+    transition: color .12s, border-color .12s, background .12s;
+  }
+  .copy:hover { color: var(--fg); border-color: #c2c8d0; background: #f7f8fa; }
+  .copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .copy[data-state="ok"] { color: var(--accent); border-color: var(--accent); background: #f0f7f4; }
+  .copy[data-state="fail"] { color: #8a5200; border-color: #d9a336; background: #fffaf0; }
+  @media (prefers-reduced-motion: reduce) { .copy { transition: none; } }
+  .snippet-bar { display: flex; justify-content: flex-end; margin-bottom: .4rem; }
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
   @media (max-width: 40rem) {
     body { padding: 2.2rem 1.1rem; }
     h1 { font-size: 1.5rem; }
-    table, thead, tbody, tr, th, td { display: block; width: 100%; }
-    thead { display: none; }
-    table { border: 0; background: none; }
-    tr { background: #fff; border: 1px solid var(--line); border-radius: 6px;
-         padding: .8rem .9rem; margin-bottom: .7rem; }
-    tr:last-child { margin-bottom: 0; }
-    td { border: 0; padding: 0; }
-    td:first-child { white-space: normal; margin-bottom: .35rem; }
-    td + td::before {
-      content: "SHA-1"; display: block; font-size: .7rem; letter-spacing: .06em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: .15rem;
-    }
+    .coord-line { gap: .45rem; }
+    .sha { font-size: .74rem; }
   }
 </style>
 </head>
@@ -65,24 +80,36 @@
   <p class="sub">A static Maven repository for artifacts QBiC projects need that Maven Central does not carry.</p>
 
   <h2>Coordinates</h2>
-  <table>
-    <thead>
-      <tr><th>Artifact</th><th>SHA-1</th></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><code>life.qbic:zzzz-openbis-api:20.10.7.3</code><br><span class="sub" style="margin:0;font-size:.82rem">pom &mdash; the POM</span></td>
-        <td><code>26d3f5a64c9830733afdbb326612ec10bb517cef</code></td>
-      </tr>
-      <tr>
-        <td><code>life.qbic:zzzz-openbis-api:20.10.7.3</code><br><span class="sub" style="margin:0;font-size:.82rem">jar, classifier <code>r1700646105</code></span></td>
-        <td><code>5c7350674e178b6c19a0c4946cc7d97470693001</code></td>
-      </tr>
-    </tbody>
-  </table>
+  <ul class="coords">
+    <li>
+      <div class="coord-line">
+        <code id="coord-pom">life.qbic:zzzz-openbis-api:20.10.7.3</code>
+        <button type="button" class="copy" hidden data-copy-from="#coord-pom"><span class="btn-label">Copy</span><span class="visually-hidden"> POM coordinate</span></button>
+      </div>
+      <p class="meta">pom &mdash; the POM</p>
+      <div class="coord-line">
+        <span class="label" aria-hidden="true">SHA-1</span>
+        <code id="sha-pom" class="sha">26d3f5a64c9830733afdbb326612ec10bb517cef</code>
+        <button type="button" class="copy" hidden data-copy-from="#sha-pom"><span class="btn-label">Copy</span><span class="visually-hidden"> POM SHA-1</span></button>
+      </div>
+    </li>
+    <li>
+      <div class="coord-line">
+        <code id="coord-jar">life.qbic:zzzz-openbis-api:20.10.7.3:r1700646105</code>
+        <button type="button" class="copy" hidden data-copy-from="#coord-jar"><span class="btn-label">Copy</span><span class="visually-hidden"> jar coordinate with classifier</span></button>
+      </div>
+      <p class="meta">jar, classifier <code>r1700646105</code></p>
+      <div class="coord-line">
+        <span class="label" aria-hidden="true">SHA-1</span>
+        <code id="sha-jar" class="sha">5c7350674e178b6c19a0c4946cc7d97470693001</code>
+        <button type="button" class="copy" hidden data-copy-from="#sha-jar"><span class="btn-label">Copy</span><span class="visually-hidden"> jar SHA-1</span></button>
+      </div>
+    </li>
+  </ul>
 
   <h2>Consume it</h2>
-<pre><code>&lt;repository&gt;
+  <div class="snippet-bar"><button type="button" class="copy" hidden data-copy-from="#snippet-repo"><span class="btn-label">Copy</span><span class="visually-hidden"> repository snippet</span></button></div>
+<pre><code id="snippet-repo">&lt;repository&gt;
   &lt;id&gt;qbic-maven-repository&lt;/id&gt;
   &lt;name&gt;QBiC Maven Repository&lt;/name&gt;
   &lt;url&gt;https://qbicsoftware.github.io/maven-repository/releases&lt;/url&gt;
@@ -102,7 +129,8 @@
   </p>
 
   <h2>Verify a file</h2>
-<pre><code>BASE=https://qbicsoftware.github.io/maven-repository/releases/life/qbic/zzzz-openbis-api/20.10.7.3
+  <div class="snippet-bar"><button type="button" class="copy" hidden data-copy-from="#snippet-verify"><span class="btn-label">Copy</span><span class="visually-hidden"> verification commands</span></button></div>
+<pre><code id="snippet-verify">BASE=https://qbicsoftware.github.io/maven-repository/releases/life/qbic/zzzz-openbis-api/20.10.7.3
 JAR=zzzz-openbis-api-20.10.7.3-r1700646105.jar
 
 curl -sSLO "$BASE/$JAR"
@@ -112,7 +140,7 @@ shasum -a 1 "$JAR"
   <h2>About</h2>
   <p>
     <code>zzzz-openbis-api</code> was previously resolved from the QBiC Nexus instance, which is not
-    reachable from GitHub Actions egress — that broke every cold-cache CI build. Its POM declares no
+    reachable from GitHub Actions egress &mdash; that broke every cold-cache CI build. Its POM declares no
     parent, no dependencies and no plugins, so mirroring it is two files and two checksums.
     The jar and POM are byte-identical to the openBIS originals. The <code>zzzz-</code> prefix is
     deliberate upstream: openBIS sorts its own modules last. openBIS is
@@ -128,5 +156,97 @@ shasum -a 1 "$JAR"
     Nothing publishes here automatically and there is no <code>maven-metadata.xml</code>.
   </footer>
 </main>
+<p id="copyStatus" class="visually-hidden" role="status" aria-live="polite"></p>
+<script>
+(function () {
+  'use strict';
+
+  var status = document.getElementById('copyStatus');
+  var RESET_MS = 1800;
+
+  function setLabel(btn, text) {
+    var el = btn.querySelector('.btn-label');
+    if (el) { el.textContent = text; } else { btn.textContent = text; }
+  }
+
+  function say(msg) { if (status) { status.textContent = msg; } }
+
+  function restore(btn) {
+    window.setTimeout(function () {
+      btn.dataset.state = '';
+      setLabel(btn, 'Copy');
+    }, RESET_MS);
+  }
+
+  function targetFor(btn) {
+    var sel = btn.getAttribute('data-copy-from');
+    return sel ? document.querySelector(sel) : null;
+  }
+
+  // Fallback for browsers without the async clipboard API. Selects the text too, so a blocked
+  // copy still leaves the user one keystroke away.
+  function selectFallback(el) {
+    if (!el) { return; }
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    var s = window.getSelection();
+    s.removeAllRanges();
+    s.addRange(range);
+  }
+
+  function execCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.top = '-1000px';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  function succeed(btn, text) {
+    btn.dataset.state = 'ok';
+    setLabel(btn, 'Copied');
+    say('Copied to clipboard: ' + text);
+    restore(btn);
+  }
+
+  function fail(btn) {
+    selectFallback(targetFor(btn));
+    btn.dataset.state = 'fail';
+    setLabel(btn, 'Press Ctrl+C');
+    say('Automatic copy was blocked. The text is selected; press Control or Command plus C.');
+    restore(btn);
+  }
+
+  document.addEventListener('click', function (ev) {
+    var btn = ev.target && ev.target.closest ? ev.target.closest('button.copy') : null;
+    if (!btn) { return; }
+    var el = targetFor(btn);
+    var text = el ? el.textContent : '';
+    if (!text) { return; }
+    ev.preventDefault();
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(
+        function () { succeed(btn, text); },
+        function () { if (execCopy(text)) { succeed(btn, text); } else { fail(btn); } }
+      );
+    } else if (execCopy(text)) {
+      succeed(btn, text);
+    } else {
+      fail(btn);
+    }
+  });
+
+  var hidden = document.querySelectorAll('button.copy[hidden]');
+  for (var i = 0; i < hidden.length; i++) { hidden[i].removeAttribute('hidden'); }
+})();
+</script>
 </body>
 </html>
