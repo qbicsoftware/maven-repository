@@ -17,6 +17,8 @@
   .sub { color: var(--muted); margin: 0 0 2.5rem; }
   h2 { font-size: .78rem; text-transform: uppercase; letter-spacing: .09em; color: var(--muted);
        margin: 2.5rem 0 .9rem; font-weight: 600; }
+  h3 { font-size: .9rem; margin: 1.6rem 0 .45rem; font-weight: 600; letter-spacing: -.005em; }
+  h2 + p.meta { margin-top: -.3rem; }
   code, pre { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
   code { font-size: .875em; background: #eef0f3; padding: .14em .38em; border-radius: 3px; }
   /* Wrap rather than scroll: a long Maven URL is ~141 chars and was being silently clipped,
@@ -108,6 +110,21 @@
   </ul>
 
   <h2>Consume it</h2>
+  <p class="meta" style="margin:0 0 1rem">
+    Two snippets: the dependency to declare, then the repository to resolve it from.
+    Coordinates are unchanged from the old Nexus setup &mdash; only the host moved.
+  </p>
+
+  <h3>1 &middot; The dependency</h3>
+  <div class="snippet-bar"><button type="button" class="copy" hidden data-copy-from="#snippet-dep"><span class="btn-label">Copy</span><span class="visually-hidden"> dependency snippet</span></button></div>
+<pre><code id="snippet-dep">&lt;dependency&gt;
+  &lt;groupId&gt;life.qbic&lt;/groupId&gt;
+  &lt;artifactId&gt;zzzz-openbis-api&lt;/artifactId&gt;
+  &lt;version&gt;20.10.7.3&lt;/version&gt;
+  &lt;classifier&gt;r1700646105&lt;/classifier&gt;
+&lt;/dependency&gt;</code></pre>
+
+  <h3>2 &middot; The repository</h3>
   <div class="snippet-bar"><button type="button" class="copy" hidden data-copy-from="#snippet-repo"><span class="btn-label">Copy</span><span class="visually-hidden"> repository snippet</span></button></div>
 <pre><code id="snippet-repo">&lt;repository&gt;
   &lt;id&gt;qbic-maven-repository&lt;/id&gt;
@@ -121,6 +138,34 @@
     &lt;enabled&gt;false&lt;/enabled&gt;
   &lt;/snapshots&gt;
 &lt;/repository&gt;</code></pre>
+
+  <h3>Both together &mdash; a complete minimal pom.xml</h3>
+  <div class="snippet-bar"><button type="button" class="copy" hidden data-copy-from="#snippet-full"><span class="btn-label">Copy</span><span class="visually-hidden"> complete pom.xml</span></button></div>
+<pre><code id="snippet-full">&lt;project xmlns="http://maven.apache.org/POM/4.0.0"&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+  &lt;groupId&gt;com.example&lt;/groupId&gt;
+  &lt;artifactId&gt;my-project&lt;/artifactId&gt;
+  &lt;version&gt;1.0.0&lt;/version&gt;
+
+  &lt;repositories&gt;
+    &lt;repository&gt;
+      &lt;id&gt;qbic-maven-repository&lt;/id&gt;
+      &lt;url&gt;https://qbicsoftware.github.io/maven-repository/releases&lt;/url&gt;
+      &lt;releases&gt;&lt;checksumPolicy&gt;fail&lt;/checksumPolicy&gt;&lt;enabled&gt;true&lt;/enabled&gt;&lt;/releases&gt;
+      &lt;snapshots&gt;&lt;enabled&gt;false&lt;/enabled&gt;&lt;/snapshots&gt;
+    &lt;/repository&gt;
+  &lt;/repositories&gt;
+
+  &lt;dependencies&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;life.qbic&lt;/groupId&gt;
+      &lt;artifactId&gt;zzzz-openbis-api&lt;/artifactId&gt;
+      &lt;version&gt;20.10.7.3&lt;/version&gt;
+      &lt;classifier&gt;r1700646105&lt;/classifier&gt;
+    &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+&lt;/project&gt;</code></pre>
 
   <p class="note">
     <strong>No <code>&lt;updatePolicy&gt;always&lt;/updatePolicy&gt;.</strong>
