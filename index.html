@@ -19,8 +19,13 @@
        margin: 2.5rem 0 .9rem; font-weight: 600; }
   code, pre { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
   code { font-size: .875em; background: #eef0f3; padding: .14em .38em; border-radius: 3px; }
+  /* Wrap rather than scroll: a long Maven URL is ~141 chars and was being silently clipped,
+     hiding half of a copy-paste command. Note white-space belongs on code, not pre - putting
+     pre-wrap on the <pre> makes the source indentation inside it collapse into blank lines. */
   pre { background: #fff; border: 1px solid var(--line); border-radius: 6px;
-        padding: 1rem 1.1rem; overflow-x: auto; font-size: .82rem; line-height: 1.55; }
+        padding: 1rem 1.1rem; font-size: .82rem; line-height: 1.55; }
+  pre code { display: block; white-space: pre-wrap; overflow-wrap: anywhere; }
+  table code { overflow-wrap: anywhere; }
   pre code { background: none; padding: 0; font-size: inherit; }
   table { width: 100%; border-collapse: collapse; font-size: .88rem; background: #fff;
           border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
@@ -34,6 +39,24 @@
           font-size: .9rem; border-radius: 0 4px 4px 0; }
   footer { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--line);
            color: var(--muted); font-size: .82rem; }
+  /* Narrow screens: a two-column hash table squeezes the SHA-1 to one character per line.
+     Stack it into per-artifact blocks instead. */
+  @media (max-width: 40rem) {
+    body { padding: 2.2rem 1.1rem; }
+    h1 { font-size: 1.5rem; }
+    table, thead, tbody, tr, th, td { display: block; width: 100%; }
+    thead { display: none; }
+    table { border: 0; background: none; }
+    tr { background: #fff; border: 1px solid var(--line); border-radius: 6px;
+         padding: .8rem .9rem; margin-bottom: .7rem; }
+    tr:last-child { margin-bottom: 0; }
+    td { border: 0; padding: 0; }
+    td:first-child { white-space: normal; margin-bottom: .35rem; }
+    td + td::before {
+      content: "SHA-1"; display: block; font-size: .7rem; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: .15rem;
+    }
+  }
 </style>
 </head>
 <body>
@@ -48,11 +71,11 @@
     </thead>
     <tbody>
       <tr>
-        <td><code>life.qbic:zzzz-openbis-api:20.10.7.3</code><br><span class="sub" style="margin:0;font-size:.82rem">pom</span></td>
+        <td><code>life.qbic:zzzz-openbis-api:20.10.7.3</code><br><span class="sub" style="margin:0;font-size:.82rem">pom &mdash; the POM</span></td>
         <td><code>26d3f5a64c9830733afdbb326612ec10bb517cef</code></td>
       </tr>
       <tr>
-        <td><code>…:20.10.7.3:r1700646105</code><br><span class="sub" style="margin:0;font-size:.82rem">jar</span></td>
+        <td><code>life.qbic:zzzz-openbis-api:20.10.7.3</code><br><span class="sub" style="margin:0;font-size:.82rem">jar, classifier <code>r1700646105</code></span></td>
         <td><code>5c7350674e178b6c19a0c4946cc7d97470693001</code></td>
       </tr>
     </tbody>
@@ -79,8 +102,11 @@
   </p>
 
   <h2>Verify a file</h2>
-<pre><code>curl -sSLO https://qbicsoftware.github.io/maven-repository/releases/life/qbic/zzzz-openbis-api/20.10.7.3/zzzz-openbis-api-20.10.7.3-r1700646105.jar
-shasum -a 1 zzzz-openbis-api-20.10.7.3-r1700646105.jar
+<pre><code>BASE=https://qbicsoftware.github.io/maven-repository/releases/life/qbic/zzzz-openbis-api/20.10.7.3
+JAR=zzzz-openbis-api-20.10.7.3-r1700646105.jar
+
+curl -sSLO "$BASE/$JAR"
+shasum -a 1 "$JAR"
 # expect 5c7350674e178b6c19a0c4946cc7d97470693001</code></pre>
 
   <h2>About</h2>
