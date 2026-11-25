@@ -37,6 +37,8 @@
   /* Coordinates: one card per artifact rather than a table. A two-column table left no room
      for a copy control without squeezing the 40-char SHA-1 into a narrow ribbon. */
   .coords { list-style: none; margin: 0; padding: 0; display: grid; gap: .7rem; }
+  ul.bundled { list-style: none; margin: .6rem 0 0; padding: 0; }
+  ul.bundled li { font-size: .82rem; color: var(--muted); padding: .16rem 0; }
   .coords > li { background: #fff; border: 1px solid var(--line); border-radius: 6px;
                  padding: .8rem .95rem; }
   .coord-line { display: flex; align-items: baseline; gap: .55rem; flex-wrap: wrap; }
@@ -185,12 +187,43 @@ shasum -a 1 "$JAR"
   <h2>About</h2>
   <p>
     <code>zzzz-openbis-api</code> was previously resolved from the QBiC Nexus instance, which is not
-    reachable from GitHub Actions egress &mdash; that broke every cold-cache CI build. Its POM declares no
-    parent, no dependencies and no plugins, so mirroring it is two files and two checksums.
-    The jar and POM are byte-identical to the openBIS originals. The <code>zzzz-</code> prefix is
-    deliberate upstream: openBIS sorts its own modules last. openBIS is
-    licensed under the <a href="https://openbis.ch/">Apache License 2.0</a>, which permits
-    redistributing the unmodified binary.
+    reachable from GitHub Actions egress &mdash; that broke every cold-cache CI build. Its POM declares
+    no parent, no dependencies and no plugins, so as a <em>Maven coordinate</em> it needs no dependency
+    graph: it is two files and two checksums. The <code>zzzz-</code> prefix is deliberate upstream;
+    openBIS sorts its own modules last.
+  </p>
+  <p>
+    The POM is empty, but <strong>the jar is not</strong>. It is a shaded uber-jar: openBIS API classes
+    plus 13 bundled libraries, each carrying its own <code>META-INF/LICENSE</code> and POM inside the
+    archive. It is therefore not the unmodified openBIS binary &mdash; it is a QBiC repackaging
+    published under a <code>life.qbic</code> coordinate.
+  </p>
+
+  <h2>Licensing</h2>
+  <p>
+    openBIS is Apache 2.0, per the vendor's own statement: &ldquo;openBIS is an open-source software
+    distributed under the Apache Licence 2.0&rdquo;
+    (<a href="https://openbis.ch/index.php/downloads/" rel="noopener">openbis.ch/downloads</a>).
+  </p>
+  <p>The jar additionally contains these libraries, all Apache 2.0:</p>
+  <ul class="bundled">
+    <li><code>com.fasterxml.jackson.core:jackson-annotations:2.9.7</code></li>
+    <li><code>com.fasterxml.jackson.core:jackson-core:2.9.7</code></li>
+    <li><code>com.fasterxml.jackson.core:jackson-databind:2.9.7</code></li>
+    <li><code>commons-io:commons-io:2.6</code></li>
+    <li><code>commons-logging:commons-logging:1.1.1</code></li>
+    <li><code>org.apache.commons:commons-lang3:3.11</code></li>
+    <li><code>org.apache.httpcomponents:httpclient:4.3.6</code></li>
+    <li><code>org.apache.httpcomponents:httpcore:4.3.3</code></li>
+    <li><code>org.eclipse.jetty:jetty-client:9.4.44.v20210927</code></li>
+    <li><code>org.eclipse.jetty:jetty-http:9.4.44.v20210927</code></li>
+    <li><code>org.eclipse.jetty:jetty-io:9.4.44.v20210927</code></li>
+    <li><code>org.eclipse.jetty:jetty-util:9.4.44.v20210927</code></li>
+    <li><code>org.slf4j:slf4j-api:1.7.7</code></li>
+  </ul>
+  <p class="meta">
+    Inventory derived from the <code>pom.properties</code> entries inside the jar. The full licence and
+    notice texts travel inside the archive under <code>META-INF/</code>.
   </p>
   <p>
     Repository documentation: <a href="https://github.com/qbicsoftware/maven-repository">github.com/qbicsoftware/maven-repository</a>
