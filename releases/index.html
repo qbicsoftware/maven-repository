@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>releases/ &mdash; QBiC Maven Repository</title>
+<style>
+  :root { --fg: #1c1e21; --muted: #5d6470; --line: #e3e6ea; --bg: #fbfbfc; --accent: #0b6e4f; }
+  body { margin: 0; padding: 3rem 1.5rem; background: var(--bg); color: var(--fg);
+         font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  main { max-width: 46rem; margin: 0 auto; }
+  h1 { font-size: 1.6rem; margin: 0 0 .3rem; letter-spacing: -.02em; }
+  .sub { color: var(--muted); margin: 0 0 2rem; }
+  h2 { font-size: .78rem; text-transform: uppercase; letter-spacing: .09em; color: var(--muted);
+       margin: 2.2rem 0 .8rem; font-weight: 600; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .86em;
+         background: #eef0f3; padding: .14em .38em; border-radius: 3px; overflow-wrap: anywhere; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: .75rem .9rem;
+       margin-bottom: .55rem; }
+  li a { color: var(--accent); text-decoration: none; }
+  li a:hover { text-decoration: underline; }
+  .dim { color: var(--muted); font-size: .82rem; }
+  .note { border-left: 3px solid #d9a336; background: #fffaf0; padding: .85rem 1rem;
+          font-size: .9rem; border-radius: 0 4px 4px 0; margin-top: 2rem; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>releases/</h1>
+  <p class="sub">The Maven repository root. This is not a browsable index &mdash; GitHub Pages serves
+     no directory listings, and Maven never asks for one. It requests exact file paths.</p>
+
+  <h2>Hosted artifacts</h2>
+  <ul>
+    <li>
+      <div><code>life.qbic:zzzz-openbis-api:20.10.7.3</code> <span class="dim">(pom)</span></div>
+      <div class="dim"><a href="life/qbic/zzzz-openbis-api/20.10.7.3/zzzz-openbis-api-20.10.7.3.pom">zzzz-openbis-api-20.10.7.3.pom</a></div>
+    </li>
+    <li>
+      <div><code>life.qbic:zzzz-openbis-api:20.10.7.3:r1700646105</code> <span class="dim">(jar)</span></div>
+      <div class="dim"><a href="life/qbic/zzzz-openbis-api/20.10.7.3/zzzz-openbis-api-20.10.7.3-r1700646105.jar">zzzz-openbis-api-20.10.7.3-r1700646105.jar</a> <span>(13 MB)</span></div>
+    </li>
+  </ul>
+
+  <h2>Verifying by hand</h2>
+  <p class="dim">A <code>404</code> here does not mean resolution is broken. Check a real file path instead:</p>
+  <p><code>curl -sI https://qbicsoftware.github.io/maven-repository/releases/life/qbic/zzzz-openbis-api/20.10.7.3/zzzz-openbis-api-20.10.7.3.pom</code></p>
+
+  <div class="note">
+    <strong>Resolution failing after an outage?</strong> Maven caches failed lookups as
+    <code>*.lastUpdated</code> markers and will not retry them. Clear them, or run with <code>-U</code>:
+    <div style="margin-top:.5rem"><code>find ~/.m2/repository -name "*.lastUpdated" -delete</code></div>
+  </div>
+
+  <p class="dim" style="margin-top:2rem">
+    <a href="../">&larr; Repository overview</a>
+  </p>
+</main>
+</body>
+</html>
