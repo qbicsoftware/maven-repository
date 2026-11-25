@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QBiC Maven Repository</title>
+<style>
+  :root { --fg: #1c1e21; --muted: #5d6470; --line: #e3e6ea; --bg: #fbfbfc; --accent: #0b6e4f; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 3.5rem 1.5rem; background: var(--bg); color: var(--fg);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 46rem; margin: 0 auto; }
+  h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 .4rem; letter-spacing: -.02em; }
+  .sub { color: var(--muted); margin: 0 0 2.5rem; }
+  h2 { font-size: .78rem; text-transform: uppercase; letter-spacing: .09em; color: var(--muted);
+       margin: 2.5rem 0 .9rem; font-weight: 600; }
+  code, pre { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
+  code { font-size: .875em; background: #eef0f3; padding: .14em .38em; border-radius: 3px; }
+  pre { background: #fff; border: 1px solid var(--line); border-radius: 6px;
+        padding: 1rem 1.1rem; overflow-x: auto; font-size: .82rem; line-height: 1.55; }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  table { width: 100%; border-collapse: collapse; font-size: .88rem; background: #fff;
+          border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  th, td { text-align: left; padding: .62rem .85rem; border-bottom: 1px solid var(--line); }
+  th { font-weight: 600; font-size: .74rem; text-transform: uppercase; letter-spacing: .06em;
+       color: var(--muted); background: #f7f8fa; }
+  tr:last-child td { border-bottom: 0; }
+  td:first-child { white-space: nowrap; }
+  a { color: var(--accent); }
+  .note { border-left: 3px solid #d9a336; background: #fffaf0; padding: .8rem 1rem;
+          font-size: .9rem; border-radius: 0 4px 4px 0; }
+  footer { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--line);
+           color: var(--muted); font-size: .82rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>QBiC Maven Repository</h1>
+  <p class="sub">A static Maven repository for artifacts QBiC projects need that Maven Central does not carry.</p>
+
+  <h2>Coordinates</h2>
+  <table>
+    <thead>
+      <tr><th>Artifact</th><th>SHA-1</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>life.qbic:zzzz-openbis-api:20.10.7.3</code><br><span class="sub" style="margin:0;font-size:.82rem">pom</span></td>
+        <td><code>26d3f5a64c9830733afdbb326612ec10bb517cef</code></td>
+      </tr>
+      <tr>
+        <td><code>…:20.10.7.3:r1700646105</code><br><span class="sub" style="margin:0;font-size:.82rem">jar</span></td>
+        <td><code>5c7350674e178b6c19a0c4946cc7d97470693001</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Consume it</h2>
+<pre><code>&lt;repository&gt;
+  &lt;id&gt;qbic-maven-repository&lt;/id&gt;
+  &lt;name&gt;QBiC Maven Repository&lt;/name&gt;
+  &lt;url&gt;https://qbicsoftware.github.io/maven-repository/releases&lt;/url&gt;
+  &lt;releases&gt;
+    &lt;checksumPolicy&gt;fail&lt;/checksumPolicy&gt;
+    &lt;enabled&gt;true&lt;/enabled&gt;
+  &lt;/releases&gt;
+  &lt;snapshots&gt;
+    &lt;enabled&gt;false&lt;/enabled&gt;
+  &lt;/snapshots&gt;
+&lt;/repository&gt;</code></pre>
+
+  <p class="note">
+    <strong>No <code>&lt;updatePolicy&gt;always&lt;/updatePolicy&gt;.</strong>
+    This repository is static: a coordinate never changes underneath a build.
+    <code>always</code> would turn an unreachable host into a per-build stall.
+  </p>
+
+  <h2>Verify a file</h2>
+<pre><code>curl -sSLO https://qbicsoftware.github.io/maven-repository/releases/life/qbic/zzzz-openbis-api/20.10.7.3/zzzz-openbis-api-20.10.7.3-r1700646105.jar
+shasum -a 1 zzzz-openbis-api-20.10.7.3-r1700646105.jar
+# expect 5c7350674e178b6c19a0c4946cc7d97470693001</code></pre>
+
+  <h2>About</h2>
+  <p>
+    <code>zzzz-openbis-api</code> was previously resolved from the QBiC Nexus instance, which is not
+    reachable from GitHub Actions egress — that broke every cold-cache CI build. Its POM declares no
+    parent, no dependencies and no plugins, so mirroring it is two files and two checksums.
+    The jar and POM are byte-identical to the openBIS originals. The <code>zzzz-</code> prefix is
+    deliberate upstream: openBIS sorts its own modules last. openBIS is
+    licensed under the <a href="https://openbis.ch/">Apache License 2.0</a>, which permits
+    redistributing the unmodified binary.
+  </p>
+  <p>
+    Repository documentation: <a href="https://github.com/qbicsoftware/maven-repository">github.com/qbicsoftware/maven-repository</a>
+  </p>
+
+  <footer>
+    Served from the <code>gh-pages</code> branch. Layout: <code>releases/groupId/artifactId/version/</code>.
+    Nothing publishes here automatically and there is no <code>maven-metadata.xml</code>.
+  </footer>
+</main>
+</body>
+</html>
